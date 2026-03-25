@@ -1,0 +1,32 @@
+{
+  "name": "engram-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for semantic search over Claude Code conversation history using local embeddings",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "save": "node dist/save_session.js",
+    "serve": "node dist/mcp_server.js",
+    "init-db": "node dist/init_db.js"
+  },
+  "keywords": [
+    "mcp",
+    "claude",
+    "memory",
+    "semantic-search",
+    "ollama",
+    "sqlite-vec"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "better-sqlite3": "^11.0.0",
+    "sqlite-vec": "^0.1.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

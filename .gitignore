@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Database (contains personal conversation data)
+memory.db
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
