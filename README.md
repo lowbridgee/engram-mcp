@@ -21,7 +21,7 @@ ollama pull nomic-embed-text
 ## Installation
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/engram-mcp.git ~/.claude/memory
+git clone https://github.com/lowbridgee/engram-mcp.git ~/.claude/memory
 cd ~/.claude/memory
 npm install
 npm run build
@@ -72,7 +72,8 @@ npm run init-db
 
 Claude Code内で以下のツールが使用可能：
 
-- **`search_memory`**: 過去の会話をハイブリッド検索
+- **`search_memory`**: 過去の会話をハイブリッド検索（結果にはIDが付与され、500文字以上は`[truncated]`表示）
+- **`get_memory`**: 指定したIDのメモリ全文を取得（truncatedされた内容を見たいときに使用）
 - **`memory_stats`**: データベースの統計情報を表示
 
 ### Manual Save

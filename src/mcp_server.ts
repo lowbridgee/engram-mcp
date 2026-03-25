@@ -168,12 +168,14 @@ async function main() {
         const formatted = results
           .map((r, i) => {
             const date = new Date(r.created_at).toLocaleDateString("ja-JP");
-            return `## Result ${i + 1} (score: ${r.score.toFixed(4)}, date: ${date})
+            const userTruncated = r.user_message.length > 500;
+            const assistantTruncated = r.assistant_message.length > 500;
+            return `## Result ${i + 1} (id: ${r.id}, score: ${r.score.toFixed(4)}, date: ${date})
 **Project:** ${r.project_path || "unknown"}
 
-**User:** ${r.user_message.slice(0, 500)}${r.user_message.length > 500 ? "..." : ""}
+**User:** ${r.user_message.slice(0, 500)}${userTruncated ? "... [truncated]" : ""}
 
-**Assistant:** ${r.assistant_message.slice(0, 500)}${r.assistant_message.length > 500 ? "..." : ""}
+**Assistant:** ${r.assistant_message.slice(0, 500)}${assistantTruncated ? "... [truncated]" : ""}
 `;
           })
           .join("\n---\n");
@@ -234,6 +236,58 @@ async function main() {
       db.close();
     }
   });
+
+  // 全文取得ツール
+  server.tool(
+    "get_memory",
+    "Get full content of a specific memory by ID (use after search_memory to see truncated content)",
+    {
+      id: z.number().describe("Memory ID from search results"),
+    },
+    async ({ id }) => {
+      const db = new Database(DB_PATH);
+
+      try {
+        const memory = db
+          .prepare(
+            `SELECT * FROM memories WHERE id = ?`
+          )
+          .get(id) as MemoryRow | undefined;
+
+        if (!memory) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Memory with ID ${id} not found.`,
+              },
+            ],
+          };
+        }
+
+        const date = new Date(memory.created_at).toLocaleDateString("ja-JP");
+        return {
+          content: [
+            {
+              type: "text",
+              text: `## Memory ${memory.id} (date: ${date})
+**Project:** ${memory.project_path || "unknown"}
+**Session:** ${memory.session_id}
+**Turn:** ${memory.turn_index}
+
+### User Message
+${memory.user_message || "(empty)"}
+
+### Assistant Message
+${memory.assistant_message || "(empty)"}`,
+            },
+          ],
+        };
+      } finally {
+        db.close();
+      }
+    }
+  );
 
   const transport = new StdioServerTransport();
   await server.connect(transport);
