@@ -32,22 +32,21 @@ npm run init-db
 
 ### 1. MCP Server設定
 
-`~/.claude/.mcp.json`:
+`claude mcp add` コマンドで登録する（全プロジェクト共通にするには `--scope user`）：
 
-```json
-{
-  "mcpServers": {
-    "memory": {
-      "command": "node",
-      "args": ["~/.claude/memory/dist/mcp_server.js"]
-    }
-  }
-}
+```bash
+claude mcp add --scope user engram-memory node /Users/$(whoami)/.claude/memory/dist/mcp_server.js
+```
+
+登録確認：
+
+```bash
+claude mcp list
 ```
 
 ### 2. Auto-save Hook設定
 
-`~/.claude/settings.json`:
+`~/.claude/settings.json` の `hooks` セクションに追加する。`~` はNode.jsで展開されないため**絶対パス**を使うこと：
 
 ```json
 {
@@ -57,7 +56,7 @@ npm run init-db
         "hooks": [
           {
             "type": "command",
-            "command": "node ~/.claude/memory/dist/save_session.js"
+            "command": "node /Users/YOUR_USERNAME/.claude/memory/dist/save_session.js"
           }
         ]
       }
